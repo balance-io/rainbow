@@ -29,7 +29,6 @@ export function generateSeedPhrase() {
 }
 
 export const walletInit = async (seedPhrase = null, accountName = null, color = null) => {
-  console.error(accountName);
   let walletAddress = null;
   let isImported = false;
   let isNew = false;
@@ -292,7 +291,7 @@ export const saveUserInfo = async (name, color, seedPhrase, privateKey, address,
   return true;
 };
 
-export const deleteUserInfo = async (address) => {
+export const deleteUserInfo = async address => {
   let newProfilesTable = [];
   let searchedUserIndex;
   const usersInfo = await loadUsersInfo();

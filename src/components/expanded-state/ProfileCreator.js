@@ -1,15 +1,14 @@
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { compose, onlyUpdateForKeys } from 'recompact';
+import { compose } from 'recompact';
 import styled from 'styled-components/primitives';
-import { addNewLocalContact } from '../../handlers/commonStorage';
 import { withAccountData, withAccountSettings } from '../../hoc';
 import { colors, margin, padding } from '../../styles';
 import { abbreviations, deviceUtils } from '../../utils';
 import { ButtonPressAnimation } from '../animations';
 import { Button } from '../buttons';
-import { ContactAvatar, showDeleteContactActionSheet } from '../contacts';
+import { ContactAvatar } from '../contacts';
 import { deleteUserInfo, editUserInfo } from '../../model/wallet';
 import CopyTooltip from '../CopyTooltip';
 import Divider from '../Divider';
@@ -17,6 +16,7 @@ import { Input } from '../inputs';
 import { Centered, KeyboardFixedOpenLayout } from '../layout';
 import { Text, TruncatedAddress } from '../text';
 import TouchableBackdrop from '../TouchableBackdrop';
+import { showActionSheetWithOptions } from '../../utils/actionsheet';
 import { AssetPanel } from './asset-panel';
 import store from '../../redux/store';
 import FloatingPanels from './FloatingPanels';
@@ -114,6 +114,28 @@ class AddContactState extends PureComponent {
     this.props.navigation.goBack();
   };
 
+  handleDeleteProfile = () => {
+    showActionSheetWithOptions(
+      {
+        cancelButtonIndex: 1,
+        destructiveButtonIndex: 0,
+        message: `Are you sure that you want to delete this wallet?`,
+        options: ['Delete Wallet', 'Cancel'],
+      },
+      async buttonIndex => {
+        if (buttonIndex === 0) {
+          await deleteUserInfo(this.props.address);
+          const { address } = this.props.profile;
+          this.props.onCloseModal({
+            address,
+            isDeleted: true,
+          });
+          this.props.navigation.goBack();
+        }
+      }
+    );
+  };
+
   handleCancel = () => {
     this.props.onUnmountModal('', 0, false);
     if (this.props.onCloseModal) {
@@ -142,13 +164,6 @@ class AddContactState extends PureComponent {
 
     this.setState({ color: newColor });
   };
-
-  handleDeleteContact = () =>
-    showDeleteContactActionSheet({
-      address: this.props.address,
-      nickname: this.state.value,
-      onDelete: this.handleCancel,
-    });
 
   handleFocusInput = () => {
     if (this.inputRef) {
@@ -240,7 +255,11 @@ class AddContactState extends PureComponent {
               </Button>
               <ButtonPressAnimation
                 marginTop={11}
-                onPress={contact ? this.handleDeleteContact : this.handleCancel}
+                onPress={
+                  this.props.isNewProfile || this.props.isCurrentProfile
+                    ? this.handleCancel
+                    : this.handleDeleteProfile
+                }
               >
                 <Centered backgroundColor={colors.white} css={padding(8, 9)}>
                   <Text
@@ -248,7 +267,9 @@ class AddContactState extends PureComponent {
                     size="lmedium"
                     weight="regular"
                   >
-                    {contact ? 'Delete Contact' : 'Cancel'}
+                    {this.props.isNewProfile || this.props.isCurrentProfile
+                      ? 'Cancel'
+                      : 'Delete Wallet'}
                   </Text>
                 </Centered>
               </ButtonPressAnimation>
