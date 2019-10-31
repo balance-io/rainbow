@@ -2,15 +2,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { View } from 'react-native';
 import { orderBy } from 'lodash';
-import {
-  compose,
-  lifecycle,
-  withHandlers,
-  withState,
-} from 'recompact';
+import { compose, lifecycle, withHandlers, withState } from 'recompact';
 import { withNavigation } from 'react-navigation';
 import { Modal, LoadingOverlay } from '../components/modal';
-import { withDataInit, withIsWalletImporting, withAccountAddress } from '../hoc';
+import {
+  withDataInit,
+  withIsWalletImporting,
+  withAccountAddress,
+} from '../hoc';
 import ProfileList from '../components/change-wallet/ProfileList';
 import { removeFirstEmojiFromString } from '../helpers/emojiHandler';
 
@@ -34,15 +33,13 @@ const ChangeWalletModal = ({
   profiles,
 }) => {
   const size = profiles ? profiles.length - 1 : 0;
-  let listHeight = (profileRowHeight * 2) + (profileRowHeight * size);
+  let listHeight = profileRowHeight * 2 + profileRowHeight * size;
   if (listHeight > 258) {
     listHeight = 258;
   }
   return (
     <View>
-      {isCreatingWallet && (
-        <LoadingOverlay title="Creating Wallet..." />
-      )}
+      {isCreatingWallet && <LoadingOverlay title="Creating Wallet..." />}
       <Modal
         fixedToTop
         height={headerHeight + listHeight}
@@ -93,7 +90,12 @@ export default compose(
   withState('isChangingWallet', 'setIsChangingWallet', false),
   withState('isInitializationOver', 'setIsInitializationOver', false),
   withHandlers({
-    onChangeWallet: ({ initializeWalletWithProfile, navigation, setIsWalletImporting, setIsChangingWallet }) => async (profile) => {
+    onChangeWallet: ({
+      initializeWalletWithProfile,
+      navigation,
+      setIsWalletImporting,
+      setIsChangingWallet,
+    }) => async profile => {
       const setIsLoading = navigation.getParam('setIsLoading', () => null);
       setIsLoading(false);
       await setIsChangingWallet(true);
@@ -106,7 +108,12 @@ export default compose(
         navigation.navigate('WalletScreen');
       }, 20);
     },
-    onCloseEditProfileModal: ({ setCurrentProfile, setProfiles, accountAddress, profiles }) => async (editedProfile) => {
+    onCloseEditProfileModal: ({
+      setCurrentProfile,
+      setProfiles,
+      accountAddress,
+      profiles,
+    }) => async editedProfile => {
       let currentProfile = false;
       const newProfiles = profiles;
       let deleteIndex;
@@ -128,35 +135,49 @@ export default compose(
         newProfiles.splice(deleteIndex, 1);
       }
       setCurrentProfile(currentProfile);
-      setProfiles(orderBy(
-        newProfiles,
-        [profile => {
-          const newEditedProfile = profile.name.toLowerCase();
-          editedProfile = removeFirstEmojiFromString(newEditedProfile);
-          return editedProfile;
-        }],
-        ['asc'],
-      ));
+      setProfiles(
+        orderBy(
+          newProfiles,
+          [
+            profile => {
+              const newEditedProfile = profile.name.toLowerCase();
+              editedProfile = removeFirstEmojiFromString(newEditedProfile);
+              return editedProfile;
+            },
+          ],
+          ['asc']
+        )
+      );
     },
     onCloseModal: ({ navigation }) => () => navigation.goBack(),
-    onPressCreateWallet: ({ createNewWallet, navigation, clearAccountData, setIsCreatingWallet, uniswapClearState, uniqueTokensClearState }) => () => {
+    onPressCreateWallet: ({
+      createNewWallet,
+      navigation,
+      clearAccountData,
+      setIsCreatingWallet,
+      uniswapClearState,
+      uniqueTokensClearState,
+    }) => () => {
       navigation.navigate('ExpandedAssetScreen', {
         actionType: 'Create',
         address: undefined,
         asset: [],
         isCurrentProfile: false,
         isNewProfile: true,
-        onCloseModal: (isCanceled) => {
+        onCloseModal: isCanceled => {
           console.log(isCanceled);
           if (!isCanceled) {
-            const setIsLoading = navigation.getParam('setIsLoading', () => null);
+            const setIsLoading = navigation.getParam(
+              'setIsLoading',
+              () => null
+            );
             setIsLoading(false);
             setIsCreatingWallet(true);
             setTimeout(async () => {
               await clearAccountData();
               await uniswapClearState();
               await uniqueTokensClearState();
-              // await createNewWallet();
+              await createNewWallet();
               setTimeout(() => {
                 setIsLoading(true);
               }, 100);
@@ -172,10 +193,10 @@ export default compose(
       navigation.goBack();
       navigation.navigate('ImportSeedPhraseSheet');
     },
-    setCurrentProfile: ({ setCurrentProfile }) => (currentProfile) => {
+    setCurrentProfile: ({ setCurrentProfile }) => currentProfile => {
       setCurrentProfile(currentProfile);
     },
-    setProfiles: ({ setProfiles }) => (profiles) => {
+    setProfiles: ({ setProfiles }) => profiles => {
       setProfiles(profiles);
     },
   }),
@@ -196,5 +217,5 @@ export default compose(
         this.props.setIsInitializationOver(true);
       }, 130);
     },
-  }),
+  })
 )(ChangeWalletModal);

@@ -33,13 +33,54 @@ import {
   web3ListenerClearState,
   web3ListenerInit,
 } from '../redux/web3listener';
-import { walletInit, loadUserDataForAddress } from '../model/wallet';
+import {
+  walletInit,
+  loadUserDataForAddress,
+  createWallet,
+} from '../model/wallet';
 import {
   walletConnectLoadState,
   walletConnectClearState,
 } from '../redux/walletconnect';
 import { promiseUtils } from '../utils';
 import withHideSplashScreen from './withHideSplashScreen';
+
+const walletInitialization = async (
+  isImported,
+  isNew,
+  walletAddress,
+  ownProps
+) => {
+  if (isNil(walletAddress)) {
+    Alert.alert(
+      'Import failed due to an invalid private key. Please try again.'
+    );
+    return null;
+  }
+  if (isImported) {
+    await ownProps.clearAccountData();
+  }
+  ownProps.settingsUpdateAccountAddress(walletAddress, 'RAINBOWWALLET');
+  if (isNew) {
+    ownProps.setIsWalletEthZero(true);
+  } else if (isImported) {
+    await ownProps.checkEthBalance(walletAddress);
+  } else {
+    const isWalletEmpty = await getIsWalletEmpty(walletAddress, 'mainnet');
+    if (isNil(isWalletEmpty)) {
+      ownProps.checkEthBalance(walletAddress);
+    } else {
+      ownProps.setIsWalletEthZero(isWalletEmpty);
+    }
+  }
+  if (!(isImported || isNew)) {
+    await ownProps.loadAccountData();
+  }
+  ownProps.onHideSplashScreen();
+  ownProps.initializeAccountData();
+  return walletAddress;
+}
+
 
 export default Component =>
   compose(
@@ -145,23 +186,30 @@ export default Component =>
       },
     }),
     withHandlers({
-      createNewWallet: (ownProps) => async () => {
+      createNewWallet: ownProps => async () => {
         try {
           const name = ownProps.accountName || 'My Wallet';
           const color = ownProps.accountColor || 0;
           const walletAddress = await createWallet(false, name, color);
           ownProps.settingsUpdateAccountName(name);
           ownProps.settingsUpdateAccountColor(color);
-  
+
           await ownProps.uniqueTokensLoadState(walletAddress);
           await ownProps.dataLoadState(walletAddress);
           await ownProps.uniswapLoadState(walletAddress);
-  
-          return await walletInitialization(false, true, walletAddress, ownProps);
+
+          return await walletInitialization(
+            false,
+            true,
+            walletAddress,
+            ownProps
+          );
         } catch (error) {
           // TODO specify error states more granular
           ownProps.onHideSplashScreen();
-          Alert.alert('Import failed due to an invalid private key. Please try again.');
+          Alert.alert(
+            'Import failed due to an invalid private key. Please try again.'
+          );
           return null;
         }
       },
@@ -170,7 +218,7 @@ export default Component =>
           const { isImported, isNew, walletAddress } = await walletInit(
             seedPhrase,
             ownProps.accountName,
-            ownProps.accountColor,
+            ownProps.accountColor
           );
           let name = ownProps.accountName ? ownProps.accountName : 'My Wallet';
           let color = ownProps.accountColor ? ownProps.accountColor : 0;
