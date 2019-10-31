@@ -93,7 +93,6 @@ export default compose(
     onChangeWallet: ({
       initializeWalletWithProfile,
       navigation,
-      setIsWalletImporting,
       setIsChangingWallet,
     }) => async profile => {
       const setIsLoading = navigation.getParam('setIsLoading', () => null);
@@ -165,7 +164,6 @@ export default compose(
         isCurrentProfile: false,
         isNewProfile: true,
         onCloseModal: isCanceled => {
-          console.log(isCanceled);
           if (!isCanceled) {
             const setIsLoading = navigation.getParam(
               'setIsLoading',

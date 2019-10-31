@@ -29,6 +29,7 @@ export function generateSeedPhrase() {
 }
 
 export const walletInit = async (seedPhrase = null, accountName = null, color = null) => {
+  console.error(accountName);
   let walletAddress = null;
   let isImported = false;
   let isNew = false;

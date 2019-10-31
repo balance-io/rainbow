@@ -20,16 +20,17 @@ const ConfirmImportAlert = (onSuccess, navigation) =>
   Alert({
     buttons: [
       {
-        onPress: () => navigation.navigate('ExpandedAssetScreen', {
-          actionType: 'Import',
-          address: undefined,
-          asset: [],
-          isCurrentProfile: false,
-          isNewProfile: true,
-          onCloseModal: (isCanceled) => (isCanceled ? null : onSuccess()),
-          profile: {},
-          type: 'profile_creator',
-        }),
+        onPress: () =>
+          navigation.navigate('ExpandedAssetScreen', {
+            actionType: 'Import',
+            address: undefined,
+            asset: [],
+            isCurrentProfile: false,
+            isNewProfile: true,
+            onCloseModal: isCanceled => (isCanceled ? null : onSuccess()),
+            profile: {},
+            type: 'profile_creator',
+          }),
         text: 'Import As New Wallet',
       },
       {

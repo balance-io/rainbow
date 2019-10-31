@@ -1,27 +1,27 @@
-import {get} from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, {PureComponent} from 'react';
-import {compose, onlyUpdateForKeys} from 'recompact';
+import React, { PureComponent } from 'react';
+import { compose, onlyUpdateForKeys } from 'recompact';
 import styled from 'styled-components/primitives';
-import {addNewLocalContact} from '../../handlers/commonStorage';
-import {withAccountData, withAccountSettings} from '../../hoc';
-import {colors, margin, padding} from '../../styles';
-import {abbreviations, deviceUtils} from '../../utils';
-import {ButtonPressAnimation} from '../animations';
-import {Button} from '../buttons';
-import {ContactAvatar, showDeleteContactActionSheet} from '../contacts';
-import {deleteUserInfo, editUserInfo} from '../../model/wallet';
+import { addNewLocalContact } from '../../handlers/commonStorage';
+import { withAccountData, withAccountSettings } from '../../hoc';
+import { colors, margin, padding } from '../../styles';
+import { abbreviations, deviceUtils } from '../../utils';
+import { ButtonPressAnimation } from '../animations';
+import { Button } from '../buttons';
+import { ContactAvatar, showDeleteContactActionSheet } from '../contacts';
+import { deleteUserInfo, editUserInfo } from '../../model/wallet';
 import CopyTooltip from '../CopyTooltip';
 import Divider from '../Divider';
-import {Input} from '../inputs';
-import {Centered, KeyboardFixedOpenLayout} from '../layout';
-import {Text, TruncatedAddress} from '../text';
+import { Input } from '../inputs';
+import { Centered, KeyboardFixedOpenLayout } from '../layout';
+import { Text, TruncatedAddress } from '../text';
 import TouchableBackdrop from '../TouchableBackdrop';
-import {AssetPanel} from './asset-panel';
+import { AssetPanel } from './asset-panel';
 import store from '../../redux/store';
 import FloatingPanels from './FloatingPanels';
 import PlaceholderText from '../text/PlaceholderText';
-import {makeSpaceAfterFirstEmoji} from '../../helpers/emojiHandler';
+import { makeSpaceAfterFirstEmoji } from '../../helpers/emojiHandler';
 import {
   settingsUpdateAccountName,
   settingsUpdateAccountColor,
@@ -80,7 +80,7 @@ class AddContactState extends PureComponent {
 
   editProfile = async () => {
     if (this.state.value.length > 0) {
-      const {address, privateKey, seedPhrase} = this.props.profile;
+      const { address, privateKey, seedPhrase } = this.props.profile;
       await editUserInfo(
         makeSpaceAfterFirstEmoji(this.state.value),
         this.state.color,
@@ -106,14 +106,12 @@ class AddContactState extends PureComponent {
   };
 
   addProfileInfo = async () => {
-    if (this.state.value.length > 0) {
-      await store.dispatch(
-        settingsUpdateAccountName(makeSpaceAfterFirstEmoji(this.state.value))
-      );
-      await store.dispatch(settingsUpdateAccountColor(this.state.color));
-      this.props.onCloseModal();
-      this.props.navigation.goBack();
-    }
+    store.dispatch(
+      settingsUpdateAccountName(makeSpaceAfterFirstEmoji(this.state.value))
+    );
+    store.dispatch(settingsUpdateAccountColor(this.state.color));
+    this.props.onCloseModal();
+    this.props.navigation.goBack();
   };
 
   handleCancel = () => {
@@ -124,25 +122,25 @@ class AddContactState extends PureComponent {
     this.props.navigation.goBack();
   };
 
-  handleChange = ({nativeEvent: {text}}) => {
+  handleChange = ({ nativeEvent: { text } }) => {
     const value = text.charCodeAt(0) === 32 ? text.substring(1) : text;
     if (value.length > 0) {
       this._text.updateValue(' ');
     } else {
       this._text.updateValue('Name');
     }
-    this.setState({value});
+    this.setState({ value });
   };
 
   handleChangeColor = async () => {
-    const {color} = this.state;
+    const { color } = this.state;
 
     let newColor = color + 1;
     if (newColor > colors.avatarColor.length - 1) {
       newColor = 0;
     }
 
-    this.setState({color: newColor});
+    this.setState({ color: newColor });
   };
 
   handleDeleteContact = () =>
@@ -163,8 +161,8 @@ class AddContactState extends PureComponent {
   };
 
   render() {
-    const {address, contact} = this.props;
-    const {color, value} = this.state;
+    const { address, contact } = this.props;
+    const { color, value } = this.state;
     const acceptAction = this.props.isNewProfile
       ? this.addProfileInfo
       : this.editProfile;
@@ -177,7 +175,8 @@ class AddContactState extends PureComponent {
             <Centered css={padding(24, 25)} direction="column">
               <ButtonPressAnimation
                 onPress={this.handleChangeColor}
-                scaleTo={0.96}>
+                scaleTo={0.96}
+              >
                 <ContactAvatar
                   color={color}
                   large
@@ -200,17 +199,20 @@ class AddContactState extends PureComponent {
                 size="big"
                 spellCheck="false"
                 ref={this.handleInputRef}
-                style={{width: '100%'}}
+                style={{ width: '100%' }}
                 textAlign="center"
                 value={value}
                 weight="semibold"
               />
-              <CopyTooltip
-                onHide={this.handleFocusInput}
-                textToCopy={address}
-                tooltipText="Copy Address">
-                <AddressAbbreviation address={address} />
-              </CopyTooltip>
+              {this.props.isNewProfile || (
+                <CopyTooltip
+                  onHide={this.handleFocusInput}
+                  textToCopy={address}
+                  tooltipText="Copy Address"
+                >
+                  <AddressAbbreviation address={address} />
+                </CopyTooltip>
+              )}
               <Centered paddingVertical={19} width={93}>
                 <Divider inset={false} />
               </Centered>
@@ -223,12 +225,14 @@ class AddContactState extends PureComponent {
                 onPress={acceptAction}
                 showShadow
                 size="small"
-                width={215}>
+                width={215}
+              >
                 <Text
                   color="white"
                   size="lmedium"
-                  style={{marginBottom: 1.5}}
-                  weight="semibold">
+                  style={{ marginBottom: 1.5 }}
+                  weight="semibold"
+                >
                   {this.props.isNewProfile
                     ? `${this.props.actionType} Wallet`
                     : 'Done'}
@@ -236,14 +240,14 @@ class AddContactState extends PureComponent {
               </Button>
               <ButtonPressAnimation
                 marginTop={11}
-                onPress={
-                  contact ? this.handleDeleteContact : this.handleCancel
-                }>
+                onPress={contact ? this.handleDeleteContact : this.handleCancel}
+              >
                 <Centered backgroundColor={colors.white} css={padding(8, 9)}>
                   <Text
                     color={colors.alpha(colors.blueGreyDark, 0.4)}
                     size="lmedium"
-                    weight="regular">
+                    weight="regular"
+                  >
                     {contact ? 'Delete Contact' : 'Cancel'}
                   </Text>
                 </Centered>
@@ -258,5 +262,5 @@ class AddContactState extends PureComponent {
 
 export default compose(
   withAccountData,
-  withAccountSettings,
+  withAccountSettings
 )(AddContactState);
