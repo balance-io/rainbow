@@ -106,10 +106,10 @@ class AddContactState extends PureComponent {
   };
 
   addProfileInfo = async () => {
-    store.dispatch(
+    await store.dispatch(
       settingsUpdateAccountName(makeSpaceAfterFirstEmoji(this.state.value))
     );
-    store.dispatch(settingsUpdateAccountColor(this.state.color));
+    await store.dispatch(settingsUpdateAccountColor(this.state.color));
     this.props.onCloseModal();
     this.props.navigation.goBack();
   };
