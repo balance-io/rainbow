@@ -11,7 +11,12 @@ import {
   withState,
 } from 'recompact';
 import { Alert } from '../components/alerts';
-import { withDataInit, withIsWalletEmpty, withIsWalletImporting } from '../hoc';
+import {
+  withDataInit,
+  withIsWalletEmpty,
+  withIsWalletImporting,
+  withAccountAddress,
+} from '../hoc';
 import { deviceUtils } from '../utils';
 import ImportSeedPhraseSheet from './ImportSeedPhraseSheet';
 import { isValidSeed as validateSeed } from '../helpers/validators';
@@ -44,6 +49,7 @@ const ConfirmImportAlert = (onSuccess, navigation) =>
   });
 
 const ImportSeedPhraseSheetWithData = compose(
+  withAccountAddress,
   withDataInit,
   withIsWalletEmpty,
   withIsWalletImporting,
@@ -79,7 +85,13 @@ const ImportSeedPhraseSheetWithData = compose(
     getClipboardContents: ({ setClipboardContents }) => async () =>
       Clipboard.getString().then(setClipboardContents),
     onImportSeedPhrase: ({ setIsWalletImporting, navigation }) => () =>
-      ConfirmImportAlert(() => setIsWalletImporting(true), navigation),
+      ConfirmImportAlert(
+        () =>
+          setTimeout(() => {
+            setIsWalletImporting(true);
+          }, 20),
+        navigation
+      ),
     onInputChange: ({ isImporting, setSeedPhrase }) => ({ nativeEvent }) => {
       if (!isImporting) {
         setSeedPhrase(nativeEvent.text);
