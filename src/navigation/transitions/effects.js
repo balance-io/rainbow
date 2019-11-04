@@ -1,6 +1,7 @@
 import { StatusBar } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import { transformOrigin } from 'react-native-redash';
 import store from '../../redux/store';
 import { updateTransitionProps } from '../../redux/navigation';
 import { interpolate } from '../../components/animations';
@@ -66,7 +67,7 @@ const exchangeStyleInterpolator = ({
   };
 };
 
-const expandStyleInterpolator = ({
+const expandStyleInterpolator = (isReversed = false) => ({
   closing,
   current: { progress: current },
   layouts: { screen },
@@ -79,7 +80,7 @@ const expandStyleInterpolator = ({
 
   const translateY = interpolate(current, {
     inputRange: [0, 1],
-    outputRange: [screen.height, 0],
+    outputRange: isReversed ? [-screen.height, 0] : [screen.height, 0],
   });
 
   return {
@@ -195,9 +196,52 @@ export const exchangePreset = {
 
 export const expandedPreset = {
   cardShadowEnabled: true,
-  cardStyleInterpolator: expandStyleInterpolator,
+  cardStyleInterpolator: expandStyleInterpolator(),
   cardTransparent: true,
   gestureDirection: 'vertical',
+  gestureResponseDistance,
+  onTransitionStart,
+  transitionSpec: { close: closeSpec, open: openSpec },
+};
+
+const changeWalletStyleInterpolator = ({
+  layouts: { screen },
+  current: { progress: current },
+}) => {
+  const cardOpacity = interpolate(current, {
+    inputRange: [0, 1],
+    outputRange: [0.01, 1],
+  });
+
+  const scale = interpolate(current, {
+    inputRange: [0, 1],
+    outputRange: [0.21, 1],
+  });
+
+  return {
+    cardStyle: {
+      shadowColor: colors.dark,
+      shadowOffset: { height: 10, width: 0 },
+      shadowOpacity: 0.6,
+      shadowRadius: 50,
+      transform: transformOrigin(
+        0,
+        -(screen.height / 2) + statusBarHeight + 62,
+        { scale }
+      ),
+    },
+    containerStyle: {
+      backgroundColor: color(37, 41, 46, 0.7),
+      opacity: cardOpacity,
+    },
+  };
+};
+
+export const expandedPresetReverse = {
+  cardShadowEnabled: true,
+  cardStyleInterpolator: changeWalletStyleInterpolator,
+  cardTransparent: true,
+  gestureDirection: 'vertical-inverted',
   gestureResponseDistance,
   onTransitionStart,
   transitionSpec: { close: closeSpec, open: openSpec },

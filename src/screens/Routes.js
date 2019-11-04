@@ -24,6 +24,7 @@ import {
   expandedPreset,
   sheetPreset,
   backgroundPreset,
+  expandedPresetReverse,
 } from '../navigation/transitions/effects';
 import ChangeWalletModal from './ChangeWalletModal';
 
@@ -71,7 +72,7 @@ const MainNavigator = createStackNavigator(
   {
     ChangeWalletModal: {
       navigationOptions: {
-        ...expandedPreset,
+        ...expandedPresetReverse,
       },
       screen: ChangeWalletModal,
     },
