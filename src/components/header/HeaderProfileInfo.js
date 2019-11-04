@@ -20,8 +20,7 @@ const Container = styled.View`
   flex-direction: row;
 `;
 
-const RightSide = styled.View`
-`;
+const RightSide = styled.View``;
 
 const TopRow = styled.View`
   flex-direction: row;
@@ -77,8 +76,8 @@ const FirstLetter = styled(Text)`
   text-align: center;
   color: #fff;
   font-weight: 600;
-  fontSize: 18;
-  lineHeight: 31;
+  font-size: 18;
+  line-height: 31;
   padding-left: 0.5px;
 `;
 
@@ -92,9 +91,9 @@ const HeaderProfileInfo = ({
   const color = accountColor || 0;
 
   return (
-    <ButtonPressAnimation onPress={onPress} scaleTo={0.90}>
+    <ButtonPressAnimation onPress={onPress} scaleTo={0.9}>
       <Container>
-        <AvatarCircle style={{ backgroundColor: colors.avatarColor[color] }} >
+        <AvatarCircle style={{ backgroundColor: colors.avatarColor[color] }}>
           <FirstLetter>
             {new GraphemeSplitter().splitGraphemes(name)[0]}
           </FirstLetter>
@@ -127,5 +126,5 @@ export default compose(
     shouldComponentUpdate(nextProps) {
       return nextProps.shouldUpdate;
     },
-  }),
+  })
 )(HeaderProfileInfo);
