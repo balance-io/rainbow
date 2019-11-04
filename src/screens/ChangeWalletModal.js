@@ -95,15 +95,12 @@ export default compose(
       navigation,
       setIsChangingWallet,
     }) => async profile => {
-      const setIsLoading = navigation.getParam('setIsLoading', () => null);
-      setIsLoading(false);
-      await setIsChangingWallet(true);
       setTimeout(async () => {
+        const setIsLoading = navigation.getParam('setIsLoading', () => null);
+        setIsLoading(false);
+        await setIsChangingWallet(true);
         await initializeWalletWithProfile(true, false, profile);
-        // timeout that prevent ugly tansition of avatar during page transition
-        setTimeout(() => {
-          setIsLoading(true);
-        }, 100);
+        setIsLoading(true);
         navigation.navigate('WalletScreen');
       }, 20);
     },

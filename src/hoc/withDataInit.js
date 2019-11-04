@@ -81,7 +81,7 @@ const walletInitialization = async (
   ownProps.onHideSplashScreen();
   ownProps.initializeAccountData();
   return walletAddress;
-}
+};
 
 
 export default Component =>
@@ -236,37 +236,16 @@ export default Component =>
           ownProps.settingsUpdateAccountName(name);
           ownProps.settingsUpdateAccountColor(color);
 
-          if (isNil(walletAddress)) {
-            Alert.alert(
-              'Import failed due to an invalid private key. Please try again.'
-            );
-            return null;
-          }
-          if (isImported) {
-            await ownProps.clearAccountData();
-          }
-          ownProps.settingsUpdateAccountAddress(walletAddress);
-          if (isNew) {
-            ownProps.setIsWalletEthZero(true);
-          } else if (isImported) {
-            await ownProps.checkEthBalance(walletAddress);
-          } else {
-            const isWalletEmpty = await getIsWalletEmpty(
-              walletAddress,
-              'mainnet'
-            );
-            if (isNil(isWalletEmpty)) {
-              ownProps.checkEthBalance(walletAddress);
-            } else {
-              ownProps.setIsWalletEthZero(isWalletEmpty);
-            }
-          }
-          if (!(isImported || isNew)) {
-            await ownProps.loadAccountData();
-          }
-          ownProps.onHideSplashScreen();
-          ownProps.initializeAccountData();
-          return walletAddress;
+          await ownProps.uniqueTokensLoadState(walletAddress);
+          await ownProps.dataLoadState(walletAddress);
+          await ownProps.uniswapLoadState(walletAddress);
+
+          return await walletInitialization(
+            isImported,
+            isNew,
+            walletAddress,
+            ownProps
+          );
         } catch (error) {
           // TODO specify error states more granular
           ownProps.onHideSplashScreen();
