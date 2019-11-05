@@ -101,12 +101,15 @@ class AddContactState extends PureComponent {
   };
 
   addProfileInfo = async () => {
+    this.props.navigation.goBack();
+    if (this.props.setIsLoading) {
+      this.props.setIsLoading(false);
+    }
     await store.dispatch(
       settingsUpdateAccountName(makeSpaceAfterFirstEmoji(this.state.value))
     );
     await store.dispatch(settingsUpdateAccountColor(this.state.color));
     this.props.onCloseModal();
-    this.props.navigation.goBack();
   };
 
   handleDeleteProfile = () => {
@@ -119,13 +122,13 @@ class AddContactState extends PureComponent {
       },
       async buttonIndex => {
         if (buttonIndex === 0) {
+          this.props.navigation.goBack();
           await deleteUserInfo(this.props.address);
           const { address } = this.props.profile;
           this.props.onCloseModal({
             address,
             isDeleted: true,
           });
-          this.props.navigation.goBack();
         }
       }
     );

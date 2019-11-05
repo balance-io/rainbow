@@ -87,13 +87,19 @@ export default compose(
       navigation,
       setIsChangingWallet,
     }) => async profile => {
-      navigation.goBack();
       const setIsLoading = navigation.getParam('setIsLoading', () => null);
       setIsLoading(false);
       await setIsChangingWallet(true);
       await initializeWalletWithProfile(true, false, profile);
-      setIsLoading(true);
-      navigation.navigate('WalletScreen');
+      navigation.goBack();
+      // timeout to give time for modal to close
+      setTimeout(() => {
+        navigation.navigate('WalletScreen');
+      }, 200);
+      // timeout prevent changing avatar during screen transition
+      setTimeout(() => {
+        setIsLoading(true);
+      }, 400);
     },
     onCloseEditProfileModal: ({
       setCurrentProfile,
@@ -157,21 +163,26 @@ export default compose(
               'setIsLoading',
               () => null
             );
-            setIsLoading(false);
             setIsCreatingWallet(true);
             setTimeout(async () => {
               await clearAccountData();
               await uniswapClearState();
               await uniqueTokensClearState();
               await createNewWallet();
+              navigation.goBack();
+              // timeout to give time for modal to close
+              setTimeout(() => {
+                navigation.navigate('WalletScreen');
+              }, 200);
+              // timeout prevent changing avatar during screen transition
               setTimeout(() => {
                 setIsLoading(true);
-                navigation.navigate('WalletScreen');
-              }, 1100);
+              }, 400);
             }, 20);
           }
         },
         profile: {},
+        setIsLoading: navigation.getParam('setIsLoading', () => null),
         type: 'profile_creator',
       });
     },
