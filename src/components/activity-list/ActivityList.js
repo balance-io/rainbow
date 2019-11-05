@@ -5,7 +5,7 @@ import {
   mapProps,
   onlyUpdateForKeys,
   withProps,
-  lifecycle,
+  shouldUpdate,
 } from 'recompact';
 import { buildTransactionsSectionsSelector } from '../../helpers/transactions';
 import { withAccountSettings, withAccountTransactions } from '../../hoc';
@@ -58,9 +58,7 @@ export default compose(
     'sections',
     'header',
   ]),
-  lifecycle({
-    shouldComponentUpdate(nextProps) {
-      return nextProps.shouldUpdate;
-    },
+  shouldUpdate((props, nextProps) => {
+    return nextProps.shouldUpdate;
   })
 )(ActivityList);

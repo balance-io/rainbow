@@ -19,17 +19,13 @@ const profileRowHeight = 54;
 const ChangeWalletModal = ({
   accountAddress,
   currentProfile,
-  isChangingWallet,
   isCreatingWallet,
   isInitializationOver,
-  navigation,
   onChangeWallet,
   onCloseEditProfileModal,
   onCloseModal,
-  onPressBack,
   onPressCreateWallet,
   onPressImportSeedPhrase,
-  onPressSection,
   profiles,
 }) => {
   const size = profiles ? profiles.length - 1 : 0;
@@ -65,17 +61,13 @@ const ChangeWalletModal = ({
 ChangeWalletModal.propTypes = {
   accountAddress: PropTypes.string,
   currentProfile: PropTypes.object,
-  isChangingWallet: PropTypes.bool,
   isCreatingWallet: PropTypes.bool,
   isInitializationOver: PropTypes.bool,
-  navigation: PropTypes.object,
   onChangeWallet: PropTypes.func,
   onCloseEditProfileModal: PropTypes.func,
   onCloseModal: PropTypes.func,
-  onPressBack: PropTypes.func,
   onPressCreateWallet: PropTypes.func,
   onPressImportSeedPhrase: PropTypes.func,
-  onPressSection: PropTypes.func,
   profiles: PropTypes.array,
 };
 
@@ -95,14 +87,13 @@ export default compose(
       navigation,
       setIsChangingWallet,
     }) => async profile => {
-      setTimeout(async () => {
-        const setIsLoading = navigation.getParam('setIsLoading', () => null);
-        setIsLoading(false);
-        await setIsChangingWallet(true);
-        await initializeWalletWithProfile(true, false, profile);
-        setIsLoading(true);
-        navigation.navigate('WalletScreen');
-      }, 20);
+      navigation.goBack();
+      const setIsLoading = navigation.getParam('setIsLoading', () => null);
+      setIsLoading(false);
+      await setIsChangingWallet(true);
+      await initializeWalletWithProfile(true, false, profile);
+      setIsLoading(true);
+      navigation.navigate('WalletScreen');
     },
     onCloseEditProfileModal: ({
       setCurrentProfile,
@@ -175,8 +166,8 @@ export default compose(
               await createNewWallet();
               setTimeout(() => {
                 setIsLoading(true);
-              }, 100);
-              navigation.navigate('WalletScreen');
+                navigation.navigate('WalletScreen');
+              }, 1100);
             }, 20);
           }
         },
@@ -184,7 +175,7 @@ export default compose(
         type: 'profile_creator',
       });
     },
-    onPressImportSeedPhrase: ({ navigation, setSafeTimeout }) => () => {
+    onPressImportSeedPhrase: ({ navigation }) => () => {
       navigation.goBack();
       navigation.navigate('ImportSeedPhraseSheet');
     },

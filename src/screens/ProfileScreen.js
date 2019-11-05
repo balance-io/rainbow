@@ -62,7 +62,7 @@ const ProfileScreen = ({
       transactionsCount={transactionsCount}
       shouldUpdate={shouldUpdate}
     />
-    {isEmpty && <AddFundsInterstitial />}
+    <AddFundsInterstitial isEmpty={isEmpty} shouldUpdate={shouldUpdate} />
     <BlurOverlay blurType="light" intensity={blurIntensity} />
   </Page>
 );

@@ -83,7 +83,6 @@ const walletInitialization = async (
   return walletAddress;
 };
 
-
 export default Component =>
   compose(
     connect(
@@ -131,23 +130,23 @@ export default Component =>
         const p0 = ownProps.explorerClearState();
         const p1 = ownProps.dataClearState();
         const p2 = ownProps.clearIsWalletEmpty();
-        const p3 = ownProps.uniqueTokensClearState();
+        // const p3 = ownProps.uniqueTokensClearState();
         const p4 = ownProps.clearOpenFamilyTab();
         const p5 = ownProps.walletConnectClearState();
         const p6 = ownProps.nonceClearState();
         const p7 = ownProps.requestsClearState();
-        const p8 = ownProps.uniswapClearState();
+        // const p8 = ownProps.uniswapClearState();
         const p9 = ownProps.gasClearState();
         return promiseUtils.PromiseAllWithFails([
           p0,
           p1,
           p2,
-          p3,
+          // p3,
           p4,
           p5,
           p6,
           p7,
-          p8,
+          // p8,
           p9,
         ]);
       },

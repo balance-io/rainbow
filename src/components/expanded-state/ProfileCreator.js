@@ -45,17 +45,12 @@ class AddContactState extends PureComponent {
     actionType: PropTypes.string,
     address: PropTypes.string,
     color: PropTypes.number,
-    format: PropTypes.func,
     isCurrentProfile: PropTypes.bool,
     isNewProfile: PropTypes.bool,
     navigation: PropTypes.object,
     onCloseModal: PropTypes.func,
-    onPressSend: PropTypes.func,
     onUnmountModal: PropTypes.func,
-    price: PropTypes.string,
     profile: PropTypes.object,
-    subtitle: PropTypes.string,
-    title: PropTypes.string,
   };
 
   constructor(props) {
@@ -176,7 +171,7 @@ class AddContactState extends PureComponent {
   };
 
   render() {
-    const { address, contact } = this.props;
+    const { address } = this.props;
     const { color, value } = this.state;
     const acceptAction = this.props.isNewProfile
       ? this.addProfileInfo
@@ -184,7 +179,7 @@ class AddContactState extends PureComponent {
 
     return (
       <KeyboardFixedOpenLayout>
-        <TouchableBackdrop onPress={this.handleAddContact} />
+        <TouchableBackdrop />
         <FloatingPanels maxWidth={deviceUtils.dimensions.width - 110}>
           <AssetPanel>
             <Centered css={padding(24, 25)} direction="column">
