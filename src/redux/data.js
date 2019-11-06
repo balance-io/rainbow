@@ -37,8 +37,11 @@ const DATA_ADD_NEW_TRANSACTION_SUCCESS =
 const DATA_CLEAR_STATE = 'data/DATA_CLEAR_STATE';
 
 // -- Actions ---------------------------------------- //
-export const dataLoadState = () => async (dispatch, getState) => {
-  const { accountAddress, network } = getState().settings;
+export const dataLoadState = (address = null) => async (dispatch, getState) => {
+  let { accountAddress, network } = getState().settings;
+  if (address) {
+    accountAddress = address;
+  }
   try {
     dispatch({ type: DATA_LOAD_ASSETS_REQUEST });
     const assets = await getAssets(accountAddress, network);

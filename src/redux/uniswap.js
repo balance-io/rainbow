@@ -69,8 +69,7 @@ export const uniswapLoadState = (address = null) => async (
   dispatch,
   getState
 ) => {
-  const { network } = getState().settings;
-  let { accountAddress } = getState().settings;
+  let { accountAddress, network } = getState().settings;
   if (address) {
     accountAddress = address;
   }

@@ -127,8 +127,9 @@ export default Component =>
       },
       clearAccountData: ownProps => async () => {
         web3ListenerClearState();
+        // TODO FIND OUT WHAT TO REMOVE FROM HERE
         const p0 = ownProps.explorerClearState();
-        const p1 = ownProps.dataClearState();
+        // const p1 = ownProps.dataClearState();
         const p2 = ownProps.clearIsWalletEmpty();
         // const p3 = ownProps.uniqueTokensClearState();
         const p4 = ownProps.clearOpenFamilyTab();
@@ -139,7 +140,7 @@ export default Component =>
         const p9 = ownProps.gasClearState();
         return promiseUtils.PromiseAllWithFails([
           p0,
-          p1,
+          // p1,
           p2,
           // p3,
           p4,
@@ -152,7 +153,8 @@ export default Component =>
       },
       initializeAccountData: ownProps => async () => {
         try {
-          ownProps.explorerInit();
+          // TODO EXPLORE THIS FUNCTION
+          // ownProps.explorerInit();
           ownProps.gasPricesInit();
           ownProps.web3ListenerInit();
           await ownProps.uniqueTokensRefreshState();

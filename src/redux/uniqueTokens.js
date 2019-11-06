@@ -28,8 +28,14 @@ const UNIQUE_TOKENS_CLEAR_STATE = 'uniqueTokens/UNIQUE_TOKENS_CLEAR_STATE';
 // -- Actions --------------------------------------------------------------- //
 let getUniqueTokensInterval = null;
 
-export const uniqueTokensLoadState = () => async (dispatch, getState) => {
-  const { accountAddress, network } = getState().settings;
+export const uniqueTokensLoadState = (address = null) => async (
+  dispatch,
+  getState
+) => {
+  let { accountAddress, network } = getState().settings;
+  if (address) {
+    accountAddress = address;
+  }
   dispatch({ type: UNIQUE_TOKENS_LOAD_UNIQUE_TOKENS_REQUEST });
   try {
     const cachedUniqueTokens = await getUniqueTokens(accountAddress, network);
