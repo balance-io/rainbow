@@ -37,6 +37,7 @@ class ProfileList extends React.Component {
     navigation: PropTypes.object,
     onChangeWallet: PropTypes.func,
     onCloseEditProfileModal: PropTypes.func,
+    onDeleteWallet: PropTypes.func,
     onPressCreateWallet: PropTypes.func,
     onPressImportSeedPhrase: PropTypes.func,
   };
@@ -137,8 +138,10 @@ class ProfileList extends React.Component {
             address: profile.address,
             asset: [],
             isCurrentProfile: false,
-            onCloseModal: editedProfile =>
-              this.props.onCloseEditProfileModal(editedProfile),
+            onCloseModal: editedProfile => {
+              this.props.onCloseEditProfileModal(editedProfile);
+              this.props.onDeleteWallet(editedProfile.address);
+            },
             profile,
             type: 'profile_creator',
           })

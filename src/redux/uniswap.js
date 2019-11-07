@@ -138,8 +138,11 @@ export const uniswapUpdateOutputCurrency = outputCurrency => async dispatch => {
 export const uniswapClearCurrenciesAndReserves = () => dispatch =>
   dispatch({ type: UNISWAP_RESET_CURRENCIES_AND_RESERVES });
 
-export const uniswapClearState = () => (dispatch, getState) => {
-  const { accountAddress, network } = getState().settings;
+export const uniswapClearState = (address = null) => (dispatch, getState) => {
+  let { accountAddress, network } = getState().settings;
+  if (address) {
+    accountAddress = address;
+  }
   shouldUpdateUniswap = false;
   removeUniswapStorage(accountAddress, network);
   dispatch({ type: UNISWAP_CLEAR_STATE });

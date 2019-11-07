@@ -127,34 +127,19 @@ export default Component =>
       },
       clearAccountData: ownProps => async () => {
         web3ListenerClearState();
-        // TODO FIND OUT WHAT TO REMOVE FROM HERE
         const p0 = ownProps.explorerClearState();
-        // const p1 = ownProps.dataClearState();
-        const p2 = ownProps.clearIsWalletEmpty();
-        // const p3 = ownProps.uniqueTokensClearState();
-        const p4 = ownProps.clearOpenFamilyTab();
-        const p5 = ownProps.walletConnectClearState();
-        const p6 = ownProps.nonceClearState();
-        const p7 = ownProps.requestsClearState();
-        // const p8 = ownProps.uniswapClearState();
-        const p9 = ownProps.gasClearState();
-        return promiseUtils.PromiseAllWithFails([
-          p0,
-          // p1,
-          p2,
-          // p3,
-          p4,
-          p5,
-          p6,
-          p7,
-          // p8,
-          p9,
-        ]);
+        const p1 = ownProps.clearIsWalletEmpty();
+        const p2 = ownProps.clearOpenFamilyTab();
+        const p3 = ownProps.walletConnectClearState();
+        const p4 = ownProps.nonceClearState();
+        const p5 = ownProps.requestsClearState();
+        const p6 = ownProps.gasClearState();
+        return promiseUtils.PromiseAllWithFails([p0, p1, p2, p3, p4, p5, p6]);
       },
       initializeAccountData: ownProps => async () => {
         try {
           // TODO EXPLORE THIS FUNCTION
-          // ownProps.explorerInit();
+          ownProps.explorerInit();
           ownProps.gasPricesInit();
           ownProps.web3ListenerInit();
           await ownProps.uniqueTokensRefreshState();
@@ -194,7 +179,7 @@ export default Component =>
           const name = ownProps.accountName || 'My Wallet';
           const color = ownProps.accountColor || 0;
           const walletAddress = await createWallet(false, name, color);
-          ownProps.settingsUpdateAccountName(name);
+          await ownProps.settingsUpdateAccountName(name);
           ownProps.settingsUpdateAccountColor(color);
 
           await ownProps.uniqueTokensLoadState(walletAddress);
@@ -208,11 +193,20 @@ export default Component =>
             ownProps
           );
         } catch (error) {
-          // TODO specify error states more granular
           ownProps.onHideSplashScreen();
-          Alert.alert(
-            'Import failed due to an invalid private key. Please try again.'
-          );
+          Alert.alert('Something went wrong during wallet creation process.');
+          return null;
+        }
+      },
+      deleteWallet: ownProps => async deleteAddress => {
+        try {
+          await ownProps.dataClearState(deleteAddress, true);
+          await ownProps.uniqueTokensClearState(deleteAddress);
+          await ownProps.uniswapClearState(deleteAddress);
+
+          return true;
+        } catch (error) {
+          ownProps.onHideSplashScreen();
           return null;
         }
       },
@@ -234,7 +228,7 @@ export default Component =>
             }
           }
 
-          ownProps.settingsUpdateAccountName(name);
+          await ownProps.settingsUpdateAccountName(name);
           ownProps.settingsUpdateAccountColor(color);
 
           await ownProps.uniqueTokensLoadState(walletAddress);
@@ -269,7 +263,7 @@ export default Component =>
             profile.privateKey,
             profile.address
           );
-          ownProps.settingsUpdateAccountName(profile.name);
+          await ownProps.settingsUpdateAccountName(profile.name);
           ownProps.settingsUpdateAccountColor(profile.color);
           saveName(profile.name);
 
@@ -286,9 +280,6 @@ export default Component =>
         } catch (error) {
           // TODO specify error states more granular
           ownProps.onHideSplashScreen();
-          Alert.alert(
-            'Import failed due to an invalid private key. Please try again.'
-          );
           return null;
         }
       },

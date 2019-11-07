@@ -64,11 +64,13 @@ export const dataLoadState = (address = null) => async (dispatch, getState) => {
   }
 };
 
-export const dataClearState = () => (dispatch, getState) => {
-  const { accountAddress, network } = getState().settings;
+export const dataClearState = (address = null) => (dispatch, getState) => {
+  let { accountAddress, network } = getState().settings;
+  if (address) {
+    accountAddress = address;
+  }
   removeAssets(accountAddress, network);
   removeLocalTransactions(accountAddress, network);
-  dispatch({ type: DATA_CLEAR_STATE });
 };
 
 export const dataUpdateAssets = assets => (dispatch, getState) => {

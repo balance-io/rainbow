@@ -24,6 +24,7 @@ const ChangeWalletModal = ({
   onChangeWallet,
   onCloseEditProfileModal,
   onCloseModal,
+  onDeleteWallet,
   onPressCreateWallet,
   onPressImportSeedPhrase,
   profiles,
@@ -49,6 +50,7 @@ const ChangeWalletModal = ({
           height={listHeight}
           onChangeWallet={onChangeWallet}
           onCloseEditProfileModal={onCloseEditProfileModal}
+          onDeleteWallet={onDeleteWallet}
           onPressCreateWallet={onPressCreateWallet}
           onPressImportSeedPhrase={onPressImportSeedPhrase}
           isInitializationOver={isInitializationOver}
@@ -66,6 +68,7 @@ ChangeWalletModal.propTypes = {
   onChangeWallet: PropTypes.func,
   onCloseEditProfileModal: PropTypes.func,
   onCloseModal: PropTypes.func,
+  onDeleteWallet: PropTypes.func,
   onPressCreateWallet: PropTypes.func,
   onPressImportSeedPhrase: PropTypes.func,
   profiles: PropTypes.array,
@@ -143,6 +146,8 @@ export default compose(
       );
     },
     onCloseModal: ({ navigation }) => () => navigation.goBack(),
+    onDeleteWallet: ({ deleteWallet }) => deleteAddress =>
+      deleteWallet(deleteAddress),
     onPressCreateWallet: ({
       createNewWallet,
       navigation,

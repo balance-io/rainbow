@@ -48,8 +48,14 @@ export const uniqueTokensLoadState = (address = null) => async (
   }
 };
 
-export const uniqueTokensClearState = () => (dispatch, getState) => {
-  const { accountAddress, network } = getState().settings;
+export const uniqueTokensClearState = (address = null) => (
+  dispatch,
+  getState
+) => {
+  let { accountAddress, network } = getState().settings;
+  if (address) {
+    accountAddress = address;
+  }
   removeUniqueTokens(accountAddress, network);
   clearInterval(getUniqueTokensInterval);
   dispatch({ type: UNIQUE_TOKENS_CLEAR_STATE });
