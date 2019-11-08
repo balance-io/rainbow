@@ -21,6 +21,10 @@ const messages = {
     CHANGED: 'changed address assets',
     RECEIVED: 'received address assets',
   },
+  ADDRESS_INFO: {
+    CHANGED: 'changed address info',
+    RECEIVED: 'received address info',
+  },
   ADDRESS_TRANSACTIONS: {
     APPENDED: 'appended address transactions',
     RECEIVED: 'received address transactions',
@@ -52,7 +56,7 @@ const addressSubscription = (address, currency, action = 'subscribe') => [
       currency: toLower(currency),
       transactions_limit: 1000,
     },
-    scope: ['assets', 'transactions'],
+    scope: ['assets', 'info', 'transactions'],
   },
 ];
 
@@ -92,14 +96,29 @@ export const explorerClearState = () => dispatch => {
   dispatch({ type: EXPLORER_CLEAR_STATE });
 };
 
+// TODO this function to be called from maker redux on interval
+// See redux/gas.js for an interval example
+export const explorerGetCdpData = () => (dispatch, getState) => {
+  const { cdpSocket } = getState().explorer;
+  // const { cdpIds } = getState().maker;
+  // TODO emit a get message with the cdp ids from the maker redux
+  // the response will be automatically handled by the listener that was added during the explorerInit
+};
+
 export const explorerInit = () => (dispatch, getState) => {
   const { accountAddress, nativeCurrency } = getState().settings;
   const addressSocket = createSocket('address');
   const assetsSocket = createSocket('assets');
+  const cdpSocket = createSocket('cdp');
   dispatch({
-    payload: { addressSocket, assetsSocket },
+    payload: { addressSocket, assetsSocket, cdpSocket },
     type: EXPLORER_UPDATE_SOCKETS,
   });
+  /*
+  cdpSocket.on(messages.CONNECT, () => {
+    dispatch(listenOnCdpMessages(cdpSocket)); // TODO make a listenOnCdpMessages function
+  });
+  */
   assetsSocket.on(messages.CONNECT, () => {
     assetsSocket.emit(
       ...assetsSubscription(uniswapAssetAddresses, nativeCurrency)
@@ -123,6 +142,14 @@ const listenOnAssetMessages = socket => dispatch => {
 };
 
 const listenOnAddressMessages = socket => dispatch => {
+  socket.on(messages.ADDRESS_INFO.RECEIVED, message => {
+    dispatch(addressInfoReceived(message)); // TODO create a function addressInfoReceived in redux/data.js to parse this message
+  });
+
+  socket.on(messages.ADDRESS_INFO.CHANGED, message => {
+    dispatch(addressInfoReceived(message));
+  });
+
   socket.on(messages.ADDRESS_TRANSACTIONS.RECEIVED, message => {
     dispatch(transactionsReceived(message));
   });
@@ -161,6 +188,7 @@ export default (state = INITIAL_STATE, action) => {
         ...state,
         addressSocket: action.payload.addressSocket,
         assetsSocket: action.payload.assetsSocket,
+        cdpSocket: action.payload.cdpSocket,
       };
     case EXPLORER_CLEAR_STATE:
       return {
