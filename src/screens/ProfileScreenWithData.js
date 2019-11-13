@@ -1,4 +1,4 @@
-import { compose, withHandlers, withProps, withState, } from 'recompact';
+import { compose, withHandlers, withProps, withState } from 'recompact';
 import { setDisplayName } from 'recompose';
 import {
   withAccountSettings,
@@ -7,7 +7,11 @@ import {
   withIsWalletEmpty,
   withRequests,
 } from '../hoc';
-import { loadUsersInfo, saveWalletDetails, loadCurrentUserInfo } from '../model/wallet';
+import {
+  loadUsersInfo,
+  saveWalletDetails,
+  loadCurrentUserInfo,
+} from '../model/wallet';
 import ProfileScreen from './ProfileScreen';
 
 export default compose(
@@ -39,14 +43,14 @@ export default compose(
           currentWallet.color,
           currentWallet.seedPhrase,
           currentWallet.privateKey,
-          currentWallet.address,
+          currentWallet.address
         );
 
         profiles = [currentWallet];
       }
       navigation.navigate('ChangeWalletModal', {
         profiles,
-        setIsLoading: (payload) => setShouldUpdate(payload),
+        setIsLoading: payload => setShouldUpdate(payload),
       });
     },
     onPressSettings: ({ navigation }) => () =>

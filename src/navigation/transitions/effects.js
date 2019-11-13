@@ -109,6 +109,12 @@ const sheetStyleInterpolator = ({
     outputRange: [0, 0, 0.9, 0.9],
   });
 
+  const cardBackgroundOpacity = interpolate(current, {
+    extrapolate: Animated.Extrapolate.CLAMP,
+    inputRange: [-1, 0, 0.99, 1, 2],
+    outputRange: [0, 0, 0, 1, 1],
+  });
+
   const translateY = block([
     interpolate(current, {
       inputRange: [0, 1],
@@ -118,6 +124,7 @@ const sheetStyleInterpolator = ({
 
   return {
     cardStyle: {
+      backgroundColor: color(20, 20, 20, cardBackgroundOpacity),
       shadowColor: colors.black,
       shadowOffset: { height: 10, width: 0 },
       shadowOpacity: 0.4,
@@ -192,6 +199,15 @@ export const exchangePreset = {
   gestureResponseDistance,
   onTransitionStart,
   transitionSpec: { close: closeSpec, open: sheetOpenSpec },
+};
+
+export const overlayExpandedPreset = {
+  cardShadowEnabled: true,
+  cardStyleInterpolator: expandStyleInterpolator,
+  cardTransparent: true,
+  gestureDirection: 'vertical',
+  gestureResponseDistance,
+  transitionSpec: { close: closeSpec, open: openSpec },
 };
 
 export const expandedPreset = {

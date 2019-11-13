@@ -66,6 +66,7 @@ export default class SwipeableContactRow extends PureComponent {
     onPress: PropTypes.func,
     onTouch: PropTypes.func,
     onTransitionEnd: PropTypes.func,
+    selectedInputId: PropTypes.object,
   };
 
   swipeableRef = undefined;
@@ -83,24 +84,17 @@ export default class SwipeableContactRow extends PureComponent {
   };
 
   handleEditContact = () => {
-    const { address, color, navigation, nickname, onChange } = this.props;
-
     this.close();
-    navigation.navigate('ExpandedAssetScreen', {
-      address,
-      asset: [],
-      color,
-      contact: { address, color, nickname },
-      onCloseModal: onChange,
-      type: 'contact',
-    });
+    this.props.onSelectEdit(this.props);
   };
 
   handleLongPress = () => this.swipeableRef.openRight();
 
   handlePress = () => this.props.onPress(this.props.address);
 
-  handlePressStart = () => this.props.onTouch(this.props.address);
+  handlePressStart = () => {
+    this.props.onTouch(this.props.address);
+  };
 
   handleRef = ref => {
     this.swipeableRef = ref;

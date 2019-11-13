@@ -1,12 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Clipboard, View, Text } from 'react-native';
-import {
-  compose,
-  onlyUpdateForKeys,
-  withHandlers,
-  withState,
-} from 'recompact';
+import { compose, withHandlers, withState } from 'recompact';
 import GraphemeSplitter from 'grapheme-splitter';
 import styled from 'styled-components/primitives';
 import { margin, colors } from '../../styles';
@@ -33,7 +28,6 @@ const Container = styled(Centered).attrs({ direction: 'column' })`
   margin-top: 24;
   margin-bottom: 24;
   padding-bottom: 32;
-  padding-top: 3;
 `;
 
 const AvatarCircle = styled(View)`
@@ -48,8 +42,8 @@ const FirstLetter = styled(Text)`
   text-align: center;
   color: #fff;
   font-weight: 600;
-  fontSize: 32.5;
-  lineHeight: 64;
+  font-size: 32.5;
+  line-height: 64;
   padding-left: 0.5px;
 `;
 
@@ -67,7 +61,7 @@ const ProfileMasthead = ({
 
   return (
     <Container>
-      <AvatarCircle style={{ backgroundColor: colors.avatarColor[color] }} >
+      <AvatarCircle style={{ backgroundColor: colors.avatarColor[color] }}>
         <FirstLetter>
           {new GraphemeSplitter().splitGraphemes(name)[0]}
         </FirstLetter>
@@ -97,7 +91,9 @@ const ProfileMasthead = ({
           text="Receive"
         />
       </RowWithMargins>
-      {showBottomDivider && <Divider style={{ bottom: 0, position: 'absolute' }} />}
+      {showBottomDivider && (
+        <Divider style={{ bottom: 0, position: 'absolute' }} />
+      )}
     </Container>
   );
 };
@@ -123,6 +119,7 @@ export default compose(
       setEmojiCount(emojiCount + 1);
       Clipboard.setString(accountAddress);
     },
-    onPressReceive: ({ navigation }) => () => navigation.navigate('ReceiveModal'),
-  }),
+    onPressReceive: ({ navigation }) => () =>
+      navigation.navigate('ReceiveModal'),
+  })
 )(ProfileMasthead);

@@ -1,6 +1,6 @@
 import { omit, pick } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Fragment, PureComponent } from 'react';
+import React, { Fragment, Component } from 'react';
 import { InteractionManager } from 'react-native';
 import {
   createNativeWrapper,
@@ -65,7 +65,7 @@ const HapticFeedbackTypes = {
   selection: 'selection',
 };
 
-export default class ButtonPressAnimation extends PureComponent {
+export default class ButtonPressAnimation extends Component {
   static propTypes = {
     activeOpacity: PropTypes.number,
     children: PropTypes.any,
@@ -150,6 +150,7 @@ export default class ButtonPressAnimation extends PureComponent {
   };
 
   createLongPressListener = () => {
+    this.longPressDetected = false;
     const { minLongPressDuration, onLongPress } = this.props;
     if (onLongPress) {
       this.longPressTimeout = setTimeout(
@@ -176,6 +177,7 @@ export default class ButtonPressAnimation extends PureComponent {
 
   handleDetectedLongPress = () => {
     this.longPressDetected = true;
+    clearTimeout(this.longPressTimeout);
     this.handleHaptic();
     this.props.onLongPress();
   };

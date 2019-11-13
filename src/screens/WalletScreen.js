@@ -12,29 +12,19 @@ import {
   ProfileHeaderButton,
 } from '../components/header';
 import { Page } from '../components/layout';
-import {
-  getOpenFamilies,
-  getOpenInvestmentCards,
-  getSmallBalanceToggle,
-} from '../handlers/localstorage/accountLocal';
 import buildWalletSectionsSelector from '../helpers/buildWalletSections';
 import {
   withAccountData,
   withAccountSettings,
-  withBlurTransitionProps,
   withDataInit,
   withIsWalletEmpty,
   withIsWalletEthZero,
   withStatusBarStyle,
   withUniqueTokens,
-  withUniswapLiquidity,
+  withUniswapLiquidityTokenInfo,
 } from '../hoc';
-import { setOpenSmallBalances } from '../redux/openBalances';
-import { pushOpenFamilyTab } from '../redux/openFamilyTabs';
-import { pushOpenInvestmentCard } from '../redux/openInvestmentCards';
-import store from '../redux/store';
 import { position } from '../styles';
-import { isNewValueForPath } from '../utils';
+import { isNewValueForObjectPaths } from '../utils';
 
 class WalletScreen extends Component {
   static propTypes = {
@@ -42,7 +32,6 @@ class WalletScreen extends Component {
     allAssetsCount: PropTypes.number,
     assets: PropTypes.array,
     assetsTotal: PropTypes.object,
-    blurIntensity: PropTypes.object,
     initializeWallet: PropTypes.func,
     isEmpty: PropTypes.bool.isRequired,
     isFocused: PropTypes.bool,
@@ -59,82 +48,23 @@ class WalletScreen extends Component {
   componentDidMount = async () => {
     try {
       await this.props.initializeWallet();
-      await this.setInitialStatesForOpenAssets();
     } catch (error) {
       // TODO error state
     }
   };
 
-  shouldComponentUpdate = nextProps => {
-    const isNewBlurIntensity = isNewValueForPath(
-      this.props,
-      nextProps,
-      'blurIntensity'
-    );
-    const isNewCurrency = isNewValueForPath(
-      this.props,
-      nextProps,
-      'nativeCurrency'
-    );
-    const isNewFetchingAssets = isNewValueForPath(
-      this.props,
-      nextProps,
-      'fetchingAssets'
-    );
-    const isNewFetchingUniqueTokens = isNewValueForPath(
-      this.props,
-      nextProps,
-      'fetchingUniqueTokens'
-    );
-    const isNewIsWalletEmpty = isNewValueForPath(
-      this.props,
-      nextProps,
-      'isEmpty'
-    );
-    const isNewIsWalletEthZero = isNewValueForPath(
-      this.props,
-      nextProps,
-      'isWalletEthZero'
-    );
-    const isNewLanguage = isNewValueForPath(this.props, nextProps, 'language');
-    const isNewSections = isNewValueForPath(this.props, nextProps, 'sections');
-
-    const isNewTransitionProps = isNewValueForPath(
-      this.props,
-      nextProps,
-      'transitionProps'
-    );
-
-    if (!nextProps.isFocused) {
-      return isNewBlurIntensity || isNewTransitionProps;
-    }
-
-    return (
-      isNewFetchingAssets ||
-      isNewFetchingUniqueTokens ||
-      isNewIsWalletEmpty ||
-      isNewIsWalletEthZero ||
-      isNewLanguage ||
-      isNewCurrency ||
-      isNewBlurIntensity ||
-      isNewSections ||
-      isNewTransitionProps
-    );
-  };
-
-  setInitialStatesForOpenAssets = async () => {
-    const { accountAddress, network } = this.props;
-    const toggle = await getSmallBalanceToggle(accountAddress, network);
-    const openInvestmentCards = await getOpenInvestmentCards(
-      accountAddress,
-      network
-    );
-    const openFamilies = await getOpenFamilies(accountAddress, network);
-    await store.dispatch(setOpenSmallBalances(toggle));
-    await store.dispatch(pushOpenInvestmentCard(openInvestmentCards));
-    await store.dispatch(pushOpenFamilyTab(openFamilies));
-    return true;
-  };
+  shouldComponentUpdate = nextProps =>
+    !nextProps.isFocused
+      ? false
+      : isNewValueForObjectPaths(this.props, nextProps, [
+          'fetchingAssets',
+          'fetchingUniqueTokens',
+          'isEmpty',
+          'isWalletEthZero',
+          'language',
+          'nativeCurrency',
+          'sections',
+        ]);
 
   render = () => {
     const {
@@ -156,7 +86,7 @@ class WalletScreen extends Component {
           scrollViewTracker={scrollViewTracker}
           sections={sections}
         >
-          <Header justify="space-between">
+          <Header marginTop={5} justify="space-between">
             <ProfileHeaderButton navigation={navigation} />
             <CameraHeaderButton navigation={navigation} />
           </Header>
@@ -178,11 +108,10 @@ export default compose(
   withUniqueTokens,
   withAccountSettings,
   withDataInit,
-  withUniswapLiquidity,
+  withUniswapLiquidityTokenInfo,
   withSafeTimeout,
   withNavigation,
   withNavigationFocus,
-  withBlurTransitionProps,
   withIsWalletEmpty,
   withIsWalletEthZero,
   withStatusBarStyle('dark-content'),

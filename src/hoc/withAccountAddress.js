@@ -21,13 +21,10 @@ const lowerAccountAddressSelector = createSelector(
 
 export default Component =>
   compose(
-    connect(
-      mapStateToProps,
-      {
-        settingsUpdateAccountAddress,
-        settingsUpdateAccountColor,
-        settingsUpdateAccountName,
-      }
-    ),
+    connect(mapStateToProps, {
+      settingsUpdateAccountAddress,
+      settingsUpdateAccountColor,
+      settingsUpdateAccountName,
+    }),
     withProps(lowerAccountAddressSelector)
   )(Component);

@@ -25,6 +25,7 @@ import {
   sheetPreset,
   backgroundPreset,
   expandedPresetReverse,
+  overlayExpandedPreset,
 } from '../navigation/transitions/effects';
 import ChangeWalletModal from './ChangeWalletModal';
 
@@ -120,6 +121,10 @@ const MainNavigator = createStackNavigator(
         },
       },
       screen: ImportSeedPhraseSheetWithData,
+    },
+    OverlayExpandedAssetScreen: {
+      navigationOptions: overlayExpandedPreset,
+      screen: ExpandedAssetScreenWithData,
     },
     ReceiveModal: {
       navigationOptions: {

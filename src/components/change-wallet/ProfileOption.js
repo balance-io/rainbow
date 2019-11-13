@@ -30,13 +30,24 @@ const Nickname = styled.Text`
   color: ${colors.dark};
 `;
 
-const ProfileOption = ({
-  icon,
-  isInitializationOver,
-  label,
-  onPress,
-}) => (isInitializationOver ? (
-  <ButtonPressAnimation scaleTo={0.96} onPress={onPress}>
+const ProfileOption = ({ icon, isInitializationOver, label, onPress }) =>
+  isInitializationOver ? (
+    <ButtonPressAnimation scaleTo={0.96} onPress={onPress}>
+      <Container>
+        <IconWrapper>
+          <Icon
+            color={colors.blueGreyMedium}
+            height={15}
+            width={15}
+            name={icon}
+          />
+        </IconWrapper>
+        <View>
+          <Nickname>{label}</Nickname>
+        </View>
+      </Container>
+    </ButtonPressAnimation>
+  ) : (
     <Container>
       <IconWrapper>
         <Icon
@@ -47,30 +58,10 @@ const ProfileOption = ({
         />
       </IconWrapper>
       <View>
-        <Nickname>
-          {label}
-        </Nickname>
+        <Nickname>{label}</Nickname>
       </View>
     </Container>
-  </ButtonPressAnimation>
-) : (
-  <Container>
-    <IconWrapper>
-      <Icon
-        color={colors.blueGreyMedium}
-        height={15}
-        width={15}
-        name={icon}
-      />
-    </IconWrapper>
-    <View>
-      <Nickname>
-        {label}
-      </Nickname>
-    </View>
-  </Container>
-)
-);
+  );
 
 ProfileOption.propTypes = {
   icon: PropTypes.string,

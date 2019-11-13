@@ -75,19 +75,18 @@ const LeftSide = styled(View)`
   flex-direction: row;
 `;
 
-const MoneyAmountWrapper = styled(View)`
-  background-color: ${colors.lightGreen};
-  border-radius: 16;
-  height: 24px;
-  padding: 4px 6.5px;
-`;
+// const MoneyAmountWrapper = styled(View)`
+//   background-color: ${colors.lightGreen};
+//   border-radius: 16;
+//   height: 24px;
+//   padding: 4px 6.5px;
+// `;
 
-const MoneyAmount = styled(Text)`
-  line-height: 16px;
-  color: ${colors.moneyGreen};
-  font-weight: ${fonts.weight.semibold};
-`;
-
+// const MoneyAmount = styled(Text)`
+//   line-height: 16px;
+//   color: ${colors.moneyGreen};
+//   font-weight: ${fonts.weight.semibold};
+// `;
 
 export default class ProfileRow extends Component {
   static propTypes = {
@@ -98,7 +97,6 @@ export default class ProfileRow extends Component {
     isInitializationOver: PropTypes.bool,
     onEditWallet: PropTypes.func,
     onPress: PropTypes.func,
-    onSwipeOpen: PropTypes.func,
     onTouch: PropTypes.func,
     onTransitionEnd: PropTypes.func,
   };
@@ -106,8 +104,6 @@ export default class ProfileRow extends Component {
   static defaultProps = {
     isHeader: false,
   };
-
-  isTouched = false;
 
   componentWillReceiveProps = () => {
     if (this.props.isInitializationOver && !this.isTouched) {
@@ -143,7 +139,7 @@ export default class ProfileRow extends Component {
               color={colors.blueGreyMedium}
               height={15}
               width={15}
-              name={'gear'}
+              name="gear"
             />
           </IconWrapper>
         </ButtonPressAnimation>
@@ -215,9 +211,7 @@ export default class ProfileRow extends Component {
                 </FirstLetter>
               </AvatarCircle>
               <View>
-                <Nickname>
-                  {name}
-                </Nickname>
+                <Nickname>{name}</Nickname>
                 <AddressAbbreviation address={accountAddress} />
               </View>
             </LeftSide>
@@ -251,7 +245,13 @@ export default class ProfileRow extends Component {
           </AvatarCircle>
           <View>
             <Nickname>{name}</Nickname>
-            <Address>{abbreviations.address(accountAddress, 4, abbreviations.defaultNumCharsPerSection)}</Address>
+            <Address>
+              {abbreviations.address(
+                accountAddress,
+                4,
+                abbreviations.defaultNumCharsPerSection
+              )}
+            </Address>
           </View>
         </LeftSide>
       </Container>

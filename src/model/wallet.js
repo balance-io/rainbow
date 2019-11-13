@@ -28,7 +28,11 @@ export function generateSeedPhrase() {
   return ethers.utils.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
 }
 
-export const walletInit = async (seedPhrase = null, accountName = null, color = null) => {
+export const walletInit = async (
+  seedPhrase = null,
+  accountName = null,
+  color = null
+) => {
   let walletAddress = null;
   let isImported = false;
   let isNew = false;
@@ -181,7 +185,13 @@ export const createWallet = async (seed, name, color) => {
       wallet = new ethers.Wallet(node.privateKey);
     }
     if (wallet) {
-      saveWalletDetails(name, color, walletSeed, wallet.privateKey, wallet.address);
+      saveWalletDetails(
+        name,
+        color,
+        walletSeed,
+        wallet.privateKey,
+        wallet.address
+      );
       return wallet.address;
     }
     return null;
@@ -190,7 +200,13 @@ export const createWallet = async (seed, name, color) => {
   }
 };
 
-export const saveWalletDetails = async (name, color, seedPhrase, privateKey, address) => {
+export const saveWalletDetails = async (
+  name,
+  color,
+  seedPhrase,
+  privateKey,
+  address
+) => {
   const canAuthenticate = await canImplyAuthentication({
     authenticationType: AUTHENTICATION_TYPE.DEVICE_PASSCODE_OR_BIOMETRICS,
   });
@@ -207,7 +223,14 @@ export const saveWalletDetails = async (name, color, seedPhrase, privateKey, add
   if (!color) {
     color = 0;
   }
-  saveUserInfo(name, color, seedPhrase, privateKey, address, accessControlOptions);
+  saveUserInfo(
+    name,
+    color,
+    seedPhrase,
+    privateKey,
+    address,
+    accessControlOptions
+  );
   saveSeedPhrase(seedPhrase, accessControlOptions);
   savePrivateKey(privateKey, accessControlOptions);
   saveAddress(address);
@@ -218,9 +241,13 @@ export const saveName = async (name, accessControlOptions = {}) => {
   await keychain.saveString(walletName, name, accessControlOptions);
 };
 
-export const loadName = async (authenticationPrompt = lang.t('wallet.authenticate.please')) => {
+export const loadName = async (
+  authenticationPrompt = lang.t('wallet.authenticate.please')
+) => {
   try {
-    const name = await keychain.loadString(walletName, { authenticationPrompt });
+    const name = await keychain.loadString(walletName, {
+      authenticationPrompt,
+    });
     return name;
   } catch (error) {
     return null;
@@ -252,7 +279,13 @@ const saveAddress = async address => {
   await keychain.saveString(addressKey, address);
 };
 
-export const saveUserInfo = async (name, color, seedPhrase, privateKey, address, accessControlOptions = {}) => {
+export const saveUserInfo = async (
+  name,
+  color,
+  seedPhrase,
+  privateKey,
+  address
+) => {
   const newProfile = {
     address,
     color,
@@ -280,12 +313,14 @@ export const saveUserInfo = async (name, color, seedPhrase, privateKey, address,
   }
   const newProfilesTableSorted = orderBy(
     newProfilesTable,
-    [profile => {
-      let editedProfile = profile.name.toLowerCase();
-      editedProfile = removeFirstEmojiFromString(editedProfile);
-      return editedProfile;
-    }],
-    ['asc'],
+    [
+      profile => {
+        let editedProfile = profile.name.toLowerCase();
+        editedProfile = removeFirstEmojiFromString(editedProfile);
+        return editedProfile;
+      },
+    ],
+    ['asc']
   );
   await keychain.saveObject(profiles, newProfilesTableSorted);
   return true;
@@ -311,7 +346,13 @@ export const deleteUserInfo = async address => {
   return false;
 };
 
-export const editUserInfo = async (name, color, seedPhrase, privateKey, address) => {
+export const editUserInfo = async (
+  name,
+  color,
+  seedPhrase,
+  privateKey,
+  address
+) => {
   const newProfile = {
     address,
     color,
@@ -334,12 +375,14 @@ export const editUserInfo = async (name, color, seedPhrase, privateKey, address)
     newProfilesTable.splice(searchedUserIndex, 1, newProfile);
     const newProfilesTableSorted = orderBy(
       newProfilesTable,
-      [profile => {
-        let editedProfile = profile.name.toLowerCase();
-        editedProfile = removeFirstEmojiFromString(editedProfile);
-        return editedProfile;
-      }],
-      ['asc'],
+      [
+        profile => {
+          let editedProfile = profile.name.toLowerCase();
+          editedProfile = removeFirstEmojiFromString(editedProfile);
+          return editedProfile;
+        },
+      ],
+      ['asc']
     );
     await keychain.saveObject(profiles, newProfilesTableSorted);
     return true;
@@ -347,7 +390,7 @@ export const editUserInfo = async (name, color, seedPhrase, privateKey, address)
   return false;
 };
 
-export const loadUserDataForAddress = async (address, accessControlOptions = {}) => {
+export const loadUserDataForAddress = async address => {
   let searchedName;
   let searchedColor;
   const usersInfo = await loadUsersInfo();
@@ -371,12 +414,22 @@ export const loadUsersInfo = async () => {
   }
 };
 
-export const loadCurrentUserInfo = async (authenticationPrompt = lang.t('wallet.authenticate.please')) => {
+export const loadCurrentUserInfo = async (
+  authenticationPrompt = lang.t('wallet.authenticate.please')
+) => {
   try {
-    const address = await keychain.loadString(addressKey, { authenticationPrompt });
-    const seedPhrase = await keychain.loadString(seedPhraseKey, { authenticationPrompt });
-    const privateKey = await keychain.loadString(privateKeyKey, { authenticationPrompt });
-    const name = await keychain.loadString(walletName, { authenticationPrompt });
+    const address = await keychain.loadString(addressKey, {
+      authenticationPrompt,
+    });
+    const seedPhrase = await keychain.loadString(seedPhraseKey, {
+      authenticationPrompt,
+    });
+    const privateKey = await keychain.loadString(privateKeyKey, {
+      authenticationPrompt,
+    });
+    const name = await keychain.loadString(walletName, {
+      authenticationPrompt,
+    });
     return {
       address,
       name,

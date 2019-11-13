@@ -279,7 +279,4 @@ class AddContactState extends PureComponent {
   }
 }
 
-export default compose(
-  withAccountData,
-  withAccountSettings
-)(AddContactState);
+export default compose(withAccountData, withAccountSettings)(AddContactState);

@@ -43,10 +43,7 @@ const withNativeCurrencySymbol = nativeCurrency => ({
   nativeCurrencySymbol: supportedNativeCurrencies[nativeCurrency].symbol,
 });
 
-const withLanguageSelector = createSelector(
-  [languageSelector],
-  withLanguage
-);
+const withLanguageSelector = createSelector([languageSelector], withLanguage);
 
 const withNativeCurrencySelector = createSelector(
   [nativeCurrencySelector],
@@ -55,13 +52,10 @@ const withNativeCurrencySelector = createSelector(
 
 export default Component =>
   compose(
-    connect(
-      mapStateToProps,
-      {
-        settingsChangeLanguage,
-        settingsChangeNativeCurrency,
-      }
-    ),
+    connect(mapStateToProps, {
+      settingsChangeLanguage,
+      settingsChangeNativeCurrency,
+    }),
     withProps(withLanguageSelector),
     withProps(withNativeCurrencySelector)
   )(Component);

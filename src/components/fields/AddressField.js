@@ -102,6 +102,7 @@ export default withNavigation(
 
     handleInputRef = ref => {
       this.inputRef = ref;
+      this.props.inputRef(ref);
     };
 
     onChange = ({ nativeEvent: { text } }) => {
@@ -120,6 +121,9 @@ export default withNavigation(
 
     onBlur = () => {
       this.checkClipboard(this.state.address);
+      if (this.props.onBlur) {
+        this.props.onBlur();
+      }
     };
 
     checkClipboard = async address => {

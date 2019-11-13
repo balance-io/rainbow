@@ -1,12 +1,12 @@
 import { find, get, isEmpty, isNumber } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Fragment, PureComponent } from 'react';
+import styled from 'styled-components/primitives';
 import { Keyboard, Clipboard } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import { compose, withProps } from 'recompact';
-import styled from 'styled-components/primitives';
 import { deleteLocalContact } from '../../handlers/localstorage/contacts';
-import { withNeverRerender } from '../../hoc';
+import { withNeverRerender, withSelectedInput } from '../../hoc';
 import { colors, padding } from '../../styles';
 import { showActionSheetWithOptions } from '../../utils/actionsheet';
 import { AddContactButton, PasteAddressButton } from '../buttons';
@@ -87,6 +87,8 @@ class SendHeader extends PureComponent {
     onPressPaste: PropTypes.func,
     onUpdateContacts: PropTypes.func,
     recipient: PropTypes.string,
+    selectedInputId: PropTypes.object,
+    setSelectedInputId: PropTypes.func,
   };
 
   handleConfirmDeleteContactSelection = async buttonIndex => {
@@ -110,6 +112,9 @@ class SendHeader extends PureComponent {
 
   navigateToContact = (contact = {}) => {
     const { navigation, onUpdateContacts, recipient } = this.props;
+    const refocusCallback =
+      this.props.selectedInputId.isFocused() &&
+      this.props.selectedInputId.focus;
 
     let color = get(contact, 'color');
     if (!isNumber(color)) {
@@ -117,18 +122,27 @@ class SendHeader extends PureComponent {
     }
 
     Keyboard.dismiss();
-    navigation.navigate('ExpandedAssetScreen', {
+    navigation.navigate('OverlayExpandedAssetScreen', {
       address: recipient,
       asset: [],
       color,
       contact: isEmpty(contact) ? false : contact,
       onCloseModal: onUpdateContacts,
+      onRefocusInput: refocusCallback,
       type: 'contact',
     });
   };
 
   openActionSheet = () =>
     openContactActionSheet(this.handleContactActionSheetSelection);
+
+  handleRef = ref => {
+    this.input = ref;
+  };
+
+  onFocus = () => this.props.setSelectedInputId(this.input);
+
+  onBlur = () => this.props.setSelectedInputId(null);
 
   render = () => {
     const {
@@ -150,8 +164,11 @@ class SendHeader extends PureComponent {
             address={recipient}
             autoFocus
             currentContact={contact}
+            inputRef={this.handleRef}
             name={contact.nickname}
+            onBlur={this.onBlur}
             onChange={onChangeAddressInput}
+            onFocus={this.onFocus}
           />
           {isValidAddress && (
             <AddContactButton
@@ -177,5 +194,6 @@ class SendHeader extends PureComponent {
 
 export default compose(
   withNavigation,
+  withSelectedInput,
   withProps(getContactForRecipient)
 )(SendHeader);

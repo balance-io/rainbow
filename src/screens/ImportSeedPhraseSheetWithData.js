@@ -1,6 +1,6 @@
 import analytics from '@segment/analytics-react-native';
 import { get } from 'lodash';
-import { Clipboard, InteractionManager, Linking } from 'react-native';
+import { Clipboard, Linking } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import {
   compose,
