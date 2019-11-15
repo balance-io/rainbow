@@ -3,12 +3,7 @@ import { isNil } from 'lodash';
 import { Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { compose, withHandlers } from 'recompact';
-import {
-  getIsWalletEmpty,
-  getOpenFamilies,
-  getOpenInvestmentCards,
-  getSmallBalanceToggle,
-} from '../handlers/localstorage/accountLocal';
+import { getIsWalletEmpty } from '../handlers/localstorage/accountLocal';
 import { hasEthBalance } from '../handlers/web3';
 import { dataClearState, dataLoadState } from '../redux/data';
 import { explorerClearState, explorerInit } from '../redux/explorer';
@@ -16,9 +11,11 @@ import { gasClearState, gasPricesInit } from '../redux/gas';
 import { clearIsWalletEmpty } from '../redux/isWalletEmpty';
 import { setIsWalletEthZero } from '../redux/isWalletEthZero';
 import { nonceClearState } from '../redux/nonce';
-import { clearOpenFamilyTab, pushOpenFamilyTab } from '../redux/openFamilyTabs';
+import {
+  clearOpenStateSettings,
+  openStateSettingsLoadState,
+} from '../redux/openStateSettings';
 import { requestsLoadState, requestsClearState } from '../redux/requests';
-
 import {
   settingsLoadState,
   settingsUpdateAccountAddress,
@@ -50,10 +47,6 @@ import {
   walletConnectLoadState,
   walletConnectClearState,
 } from '../redux/walletconnect';
-import { setOpenSmallBalances } from '../redux/openBalances';
-
-import { pushOpenInvestmentCard } from '../redux/openInvestmentCards';
-import store from '../redux/store';
 import { promiseUtils } from '../utils';
 import withHideSplashScreen from './withHideSplashScreen';
 
@@ -97,7 +90,7 @@ export default Component =>
   compose(
     connect(null, {
       clearIsWalletEmpty,
-      clearOpenFamilyTab,
+      clearOpenStateSettings,
       dataClearState,
       dataLoadState,
       explorerClearState,
@@ -105,6 +98,7 @@ export default Component =>
       gasClearState,
       gasPricesInit,
       nonceClearState,
+      openStateSettingsLoadState,
       requestsClearState,
       requestsLoadState,
       setIsWalletEthZero,
@@ -156,6 +150,7 @@ export default Component =>
         }
       },
       loadAccountData: ownProps => async () => {
+        await ownProps.openStateSettingsLoadState();
         const p1 = ownProps.settingsLoadState();
         const p2 = ownProps.dataLoadState();
         const p3 = ownProps.uniqueTokensLoadState();
@@ -178,17 +173,6 @@ export default Component =>
           console.log('Error refreshing data', error);
           throw error;
         }
-      },
-      setInitialStatesForOpenAssets: () => async (walletAddress, network) => {
-        const toggle = await getSmallBalanceToggle(walletAddress, network);
-        const openInvestmentCards = await getOpenInvestmentCards(
-          walletAddress,
-          network
-        );
-        const openFamilies = await getOpenFamilies(walletAddress, network);
-        await store.dispatch(setOpenSmallBalances(toggle));
-        await store.dispatch(pushOpenInvestmentCard(openInvestmentCards));
-        await store.dispatch(pushOpenFamilyTab(openFamilies));
       },
     }),
     withHandlers({
