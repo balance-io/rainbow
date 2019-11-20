@@ -28,6 +28,8 @@ import store from './redux/store';
 import { requestsForTopic } from './redux/requests';
 import Routes from './screens/Routes';
 import { parseQueryParams } from './utils';
+import { ApolloProvider } from '@apollo/react-hooks';
+import { client } from './apollo/client';
 
 if (process.env.NODE_ENV === 'development') {
   console.disableYellowBox = true;
@@ -185,12 +187,14 @@ class App extends Component {
     Navigation.setTopLevelNavigator(navigatorRef);
 
   render = () => (
+    <ApolloProvider client={client}>
     <Provider store={store}>
       <FlexItem>
         <OfflineBadge />
         <Routes ref={this.handleNavigatorRef} />
       </FlexItem>
     </Provider>
+    </ApolloProvider>
   );
 }
 
