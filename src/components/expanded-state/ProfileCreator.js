@@ -21,7 +21,6 @@ import { AssetPanel } from './asset-panel';
 import store from '../../redux/store';
 import FloatingPanels from './FloatingPanels';
 import PlaceholderText from '../text/PlaceholderText';
-import { makeSpaceAfterFirstEmoji } from '../../helpers/emojiHandler';
 import {
   settingsUpdateAccountName,
   settingsUpdateAccountColor,
@@ -77,22 +76,20 @@ class AddContactState extends PureComponent {
     if (this.state.value.length > 0) {
       const { address, privateKey, seedPhrase } = this.props.profile;
       await editUserInfo(
-        makeSpaceAfterFirstEmoji(this.state.value),
+        this.state.value,
         this.state.color,
         seedPhrase,
         privateKey,
         address
       );
       if (this.props.isCurrentProfile) {
-        store.dispatch(
-          settingsUpdateAccountName(makeSpaceAfterFirstEmoji(this.state.value))
-        );
+        store.dispatch(settingsUpdateAccountName(this.state.value));
         store.dispatch(settingsUpdateAccountColor(this.state.color));
       }
       this.props.onCloseModal({
         address,
         color: this.state.color,
-        name: makeSpaceAfterFirstEmoji(this.state.value),
+        name: this.state.value,
         privateKey,
         seedPhrase,
       });
@@ -105,9 +102,7 @@ class AddContactState extends PureComponent {
     if (this.props.setIsLoading) {
       this.props.setIsLoading(false);
     }
-    await store.dispatch(
-      settingsUpdateAccountName(makeSpaceAfterFirstEmoji(this.state.value))
-    );
+    await store.dispatch(settingsUpdateAccountName(this.state.value));
     await store.dispatch(settingsUpdateAccountColor(this.state.color));
     this.props.onCloseModal();
   };

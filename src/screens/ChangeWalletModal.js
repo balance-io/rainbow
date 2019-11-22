@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { View } from 'react-native';
+import { View, StatusBar } from 'react-native';
 import { orderBy } from 'lodash';
 import { compose, lifecycle, withHandlers, withState } from 'recompact';
 import { withNavigation } from 'react-navigation';
@@ -94,15 +94,16 @@ export default compose(
       setIsLoading(false);
       await setIsChangingWallet(true);
       await initializeWalletWithProfile(true, false, profile);
-      navigation.goBack();
+      await navigation.goBack();
       // timeout to give time for modal to close
       setTimeout(() => {
         navigation.navigate('WalletScreen');
-      }, 200);
-      // timeout prevent changing avatar during screen transition
-      setTimeout(() => {
-        setIsLoading(true);
       }, 400);
+      setTimeout(() => {
+        StatusBar.setBarStyle('dark-content');
+        setIsLoading(true);
+      }, 600);
+      // // timeout prevent changing avatar during screen transition
     },
     onCloseEditProfileModal: ({
       setCurrentProfile,

@@ -63,10 +63,13 @@ const walletInitialization = async (
     );
     return null;
   }
+  if (!(isImported || isNew)) {
+    await ownProps.loadAccountData();
+  }
   if (isImported) {
     await ownProps.clearAccountData();
   }
-  ownProps.settingsUpdateAccountAddress(walletAddress, 'RAINBOWWALLET');
+  ownProps.settingsUpdateAccountAddress(walletAddress);
   if (isNew) {
     ownProps.setIsWalletEthZero(true);
   } else if (isImported) {
@@ -78,9 +81,6 @@ const walletInitialization = async (
     } else {
       ownProps.setIsWalletEthZero(isWalletEmpty);
     }
-  }
-  if (!(isImported || isNew)) {
-    // await ownProps.loadAccountData();
   }
   ownProps.onHideSplashScreen();
   ownProps.initializeAccountData();

@@ -54,17 +54,15 @@ class WalletScreen extends Component {
   };
 
   shouldComponentUpdate = nextProps =>
-    !nextProps.isFocused
-      ? false
-      : isNewValueForObjectPaths(this.props, nextProps, [
-          'fetchingAssets',
-          'fetchingUniqueTokens',
-          'isEmpty',
-          'isWalletEthZero',
-          'language',
-          'nativeCurrency',
-          'sections',
-        ]);
+    isNewValueForObjectPaths(this.props, nextProps, [
+      'fetchingAssets',
+      'fetchingUniqueTokens',
+      'isEmpty',
+      'isWalletEthZero',
+      'language',
+      'nativeCurrency',
+      'sections',
+    ]);
 
   render = () => {
     const {
