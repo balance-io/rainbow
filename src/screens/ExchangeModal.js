@@ -54,6 +54,7 @@ import {
   withUniswapAllowances,
   withUniswapAssets,
 } from '../hoc';
+import ethUnits from '../references/ethereum-units.json';
 import { colors, padding, position } from '../styles';
 import {
   isNewValueForObjectPaths,
@@ -128,6 +129,10 @@ class ExchangeModal extends Component {
     slippage: null,
     tradeDetails: null,
   };
+
+  componentDidMount() {
+    this.props.gasUpdateDefaultGasLimit(ethUnits.basic_swap);
+  }
 
   shouldComponentUpdate = (nextProps, nextState) => {
     const isNewProps = isNewValueForObjectPaths(this.props, nextProps, [
@@ -492,11 +497,14 @@ class ExchangeModal extends Component {
             updatedOutputAmount,
             outputDecimals
           );
-
           if (rawUpdatedOutputAmount !== '0') {
+            let outputNativePrice = get(outputCurrency, 'price.value', null);
+            if (isNil(outputNativePrice)) {
+              outputNativePrice = this.getMarketPrice();
+            }
             const updatedOutputAmountDisplay = updatePrecisionToDisplay(
               rawUpdatedOutputAmount,
-              get(outputCurrency, 'price.value')
+              outputNativePrice
             );
 
             this.setOutputAmount(
@@ -747,7 +755,11 @@ class ExchangeModal extends Component {
         if (isNil(nativePrice)) {
           nativePrice = this.getMarketPrice();
         }
-        inputAmount = convertAmountFromNativeValue(nativeAmount, nativePrice);
+        inputAmount = convertAmountFromNativeValue(
+          nativeAmount,
+          nativePrice,
+          inputCurrency.decimals
+        );
         inputAmountDisplay = updatePrecisionToDisplay(
           inputAmount,
           nativePrice,

@@ -62,7 +62,7 @@ const exchangeStyleInterpolator = ({
       transform: [{ translateY }],
     },
     containerStyle: {
-      backgroundColor: color(25, 25, 25, backgroundOpacity),
+      backgroundColor: color(20, 20, 20, backgroundOpacity),
     },
   };
 };
